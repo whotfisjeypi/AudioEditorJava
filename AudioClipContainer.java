@@ -1,4 +1,4 @@
-package ProyectoFinal;
+package Testing;
 
 import javax.sound.sampled.AudioInputStream;
 import java.util.ArrayList;
@@ -13,13 +13,6 @@ public class AudioClipContainer<T extends AudioInputStream> {
 
     public List<T> getClips() {
         return clips;
-    }
-
-    public T getLastClip() {
-        if (clips.isEmpty()) {
-            return null;
-        }
-        return clips.get(clips.size() - 1);
     }
 
 }

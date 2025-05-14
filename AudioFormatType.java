@@ -1,4 +1,4 @@
-package ProyectoFinal;
+package Testing;
 
 public enum AudioFormatType {
     WAV,MP3;
