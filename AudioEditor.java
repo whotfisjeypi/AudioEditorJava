@@ -12,6 +12,8 @@ import java.io.*;
 // Clase principal para editar audio
 public class AudioEditor extends BaseAudioEditor implements AudioEffect {
 
+    private Clip clip;
+
     @Override
     public AudioInputStream applyEffect(AudioInputStream inputStream) throws Exception {
         System.out.println("Applying effect to the audio stream...");
@@ -33,13 +35,15 @@ public class AudioEditor extends BaseAudioEditor implements AudioEffect {
         if (!(file.getName().endsWith(".wav") || file.getName().endsWith(".mp3"))) {
             throw new IllegalArgumentException("Unsupported file type. Only .wav and .mp3 are allowed.");
         }
-
-        // Carga el audio y guarda el tipo de formato
-        audioStream = AudioSystem.getAudioInputStream(file);
-        formatType = file.getName().endsWith(".wav") ? AudioFormatType.WAV : AudioFormatType.MP3;
+        if (file.getName().endsWith(".mp3")) {
+            audioStream = AudioSystem.getAudioInputStream(file);
+            formatType = AudioFormatType.MP3;
+        } else {
+            audioStream = AudioSystem.getAudioInputStream(file);
+            formatType = AudioFormatType.WAV;
+        }
         System.out.println("Audio loaded: " + file.getName() + " with format: " + formatType);
     }
-
     @Override
     public void saveAudio(File file) throws Exception {
         // Guarda el audio actual en un archivo
@@ -120,28 +124,61 @@ public class AudioEditor extends BaseAudioEditor implements AudioEffect {
     // Metodo para reproducir el audio cargado
     public void playAudio() {
         if (audioStream == null) {
-            System.out.println("No hay audio cargado para reproducir.");
+            System.out.println("No audio loaded to play.");
             return;
         }
-
         try {
-            // Reinicia el stream antes de reproducir
             audioStream.reset();
-
-            Clip clip = AudioSystem.getClip();
+            clip = AudioSystem.getClip();
             clip.open(audioStream);
-            clip.start();
-
-            System.out.println("Reproduciendo audio...");
-            // Espera mientras se reproduce
-            while (!clip.isRunning())
-                Thread.sleep(10);
-            while (clip.isRunning())
-                Thread.sleep(10);
-
-            clip.close();
+            Thread playbackThread = new Thread(() -> {
+                clip.start();
+                System.out.println("Audio is playing...");
+                // Keeps thread alive until playback completes
+                try {
+                    Thread.sleep(clip.getMicrosecondLength() / 1000);
+                } catch (InterruptedException e) {
+                    // Thread interrupted for pausing/stopping
+                }
+            });
+            playbackThread.start();
         } catch (Exception e) {
-            System.out.println("Error al reproducir audio: " + e.getMessage());
+            System.out.println("Error during audio playback: " + e.getMessage());
+        }
+    }
+
+    // Pause the currently playing audio
+    public void pauseAudio() {
+        if (clip != null && clip.isRunning()) {
+            clip.stop();
+            System.out.println("Audio paused.");
+        } else {
+            System.out.println("No audio is playing.");
+        }
+    }
+
+    public void playLastClip() {
+        AudioInputStream clipStream = clipContainer.getLastClip();
+        if (clipStream == null) {
+            System.out.println("No clip available to play.");
+            return;
+        }
+        try {
+            // Open a new Clip for playback of the cut audio clip.
+            Clip clipForCut = AudioSystem.getClip();
+            clipForCut.open(clipStream);
+            Thread playbackThread = new Thread(() -> {
+                clipForCut.start();
+                System.out.println("Cut clip is playing...");
+                try {
+                    Thread.sleep(clipForCut.getMicrosecondLength() / 1000);
+                } catch (InterruptedException e) {
+                    // Thread interrupted for pausing/stopping
+                }
+            });
+            playbackThread.start();
+        } catch (Exception e) {
+            System.out.println("Error during cut clip playback: " + e.getMessage());
         }
     }
 

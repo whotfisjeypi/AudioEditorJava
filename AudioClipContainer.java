@@ -15,4 +15,11 @@ public class AudioClipContainer<T extends AudioInputStream> {
         return clips;
     }
 
+    public T getLastClip() {
+        if (clips.isEmpty()) {
+            return null;
+        }
+        return clips.get(clips.size() - 1);
+    }
+
 }
