@@ -1,6 +1,8 @@
 package ProyectoFinal;
 
 import be.tarsos.dsp.*; // Libreria para procesar audio
+import be.tarsos.dsp.io.TarsosDSPAudioFormat;
+
 import java.io.*;
 import javax.sound.sampled.*;
 
@@ -15,7 +17,7 @@ public class EchoEffect extends BaseEffect {
     // Aplica el efecto de eco al audio recibido
     @Override
     public AudioInputStream applyEffect(AudioInputStream input) throws Exception {
-        // Lee todo el audio en bytes
+        // Lee el audio en bytes
         byte[] audioBytes = input.readAllBytes();
         AudioFormat format = input.getFormat();
 
