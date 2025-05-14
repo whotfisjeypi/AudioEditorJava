@@ -1,5 +1,7 @@
 package ProyectoFinal;
 
+import javax.sound.sampled.AudioInputStream;
+
 public interface AudioEffect {
-    void applyEffect() throws Exception;
+    AudioInputStream applyEffect(AudioInputStream input) throws Exception;
 }
