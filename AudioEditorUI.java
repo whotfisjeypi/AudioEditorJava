@@ -33,7 +33,7 @@ public class AudioEditorUI extends JFrame {
         playButton.addActionListener(this::playAudio);
         toolBar.add(playButton);
 
-        // New Stop button added for pausing/stopping playback
+
         JButton stopButton = new JButton("Stop");
         stopButton.addActionListener(this::stopAudio);
         toolBar.add(stopButton);

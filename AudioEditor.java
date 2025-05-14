@@ -14,10 +14,10 @@ public class AudioEditor extends BaseAudioEditor implements AudioEffect {
     private AudioClipContainer<AudioInputStream> clipContainer = new AudioClipContainer<>();
     private AudioFormatType formatType;
     private Clip currentClip;
-    private byte[] originalAudioData; // Store full audio data
+    private byte[] originalAudioData;
 
-    // Java (in src/Testing/AudioEditor.java)
-    private AudioFormat audioFormat; // new field to store the audio format
+
+    private AudioFormat audioFormat;
 
     @Override
     public void loadAudio(File file) throws Exception {
@@ -43,13 +43,12 @@ public class AudioEditor extends BaseAudioEditor implements AudioEffect {
             formatType = AudioFormatType.WAV;
             System.out.println("WAV loaded.");
         }
-        // Store the audio format for later use
         audioFormat = in.getFormat();
         originalAudioData = in.readAllBytes();
         audioStream = createNewAudioStream();
     }
 
-    // Helper method now uses the stored audioFormat field
+
     private AudioInputStream createNewAudioStream() {
         ByteArrayInputStream bais = new ByteArrayInputStream(originalAudioData);
         return new AudioInputStream(bais, audioFormat, originalAudioData.length / audioFormat.getFrameSize());
@@ -72,7 +71,7 @@ public class AudioEditor extends BaseAudioEditor implements AudioEffect {
 
     public void cut(int startMillis, int endMillis) throws IOException {
         if(originalAudioData == null) throw new IllegalStateException("No audio loaded");
-        // Use a fresh stream for cutting
+
         audioStream = createNewAudioStream();
         if(startMillis < 0 || endMillis <= startMillis) {
             throw new IllegalArgumentException("Invalid cut range.");
@@ -138,7 +137,7 @@ public class AudioEditor extends BaseAudioEditor implements AudioEffect {
 
     public void playAudio() throws Exception {
         if (originalAudioData == null) throw new IllegalStateException("No audio loaded");
-        // Use a fresh stream for playback
+
         audioStream = createNewAudioStream();
         if (!audioStream.markSupported()) {
             audioStream = new AudioInputStream(new BufferedInputStream(audioStream), audioStream.getFormat(), audioStream.getFrameLength());
