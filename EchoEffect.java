@@ -1,7 +1,10 @@
 package ProyectoFinal;
 
 import be.tarsos.dsp.*; // Libreria para procesar audio
+import be.tarsos.dsp.effects.DelayEffect;
 import be.tarsos.dsp.io.TarsosDSPAudioFormat;
+import be.tarsos.dsp.io.jvm.AudioDispatcherFactory;
+import be.tarsos.dsp.writer.WriterProcessor;
 
 import java.io.*;
 import javax.sound.sampled.*;
